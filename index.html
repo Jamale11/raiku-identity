@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raiku Pro Community ID Card</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background: #0d0d0d;
+      color: #fff;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    input {
+      width: 250px;
+    }
+    button {
+      background: #ff007a;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #ff3399;
+    }
+    #preview {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔗 Raiku Pro Community ID Card Generator</h2>
+  <p>Masukkan nama kamu, lalu generate kartu ID premium 🚀</p>
+
+  <input type="text" id="username" placeholder="Enter your name">
+  <button onclick="generateCard()">Generate Card</button>
+  <button onclick="downloadCard()">Download PNG</button>
+
+  <div id="preview">
+    <canvas id="idCanvas" width="500" height="300"></canvas>
+  </div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+  <script>
+    function generateCard() {
+      let username = document.getElementById("username").value.trim();
+      if (username === "") {
+        alert("⚠️ Masukkan nama dulu!");
+        return;
+      }
+      
+      // Buat ID unik
+      let randomNum = Math.floor(1000 + Math.random() * 9000);
+      let uniqueID = "RAIKU-" + username.toUpperCase().slice(0,4) + "-" + randomNum;
+
+      let canvas = document.getElementById("idCanvas");
+      let ctx = canvas.getContext("2d");
+
+      // Load background image
+      let bg = new Image();
+      bg.src = "raiku-bg.png"; // ganti dengan background custom
+      bg.onload = function() {
+        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+
+        // Semi-transparent overlay
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Logo Raiku
+        let logo = new Image();
+        logo.src = "raiku-logo.png"; // ganti dengan logo Raiku
+        logo.onload = function() {
+          ctx.drawImage(logo, 20, 20, 80, 80);
+
+          // Judul
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 24px Arial";
+          ctx.fillText("🔥 Raiku Community ID 🔥", 120, 60);
+
+          // Nama user
+          ctx.fillStyle = "#00ffcc";
+          ctx.font = "bold 32px Arial";
+          ctx.fillText(username, 50, 150);
+
+          // Unique ID
+          ctx.fillStyle = "#fff";
+          ctx.font = "20px Arial";
+          ctx.fillText("ID: " + uniqueID, 50, 190);
+
+          // Footer
+          ctx.fillStyle = "#aaa";
+          ctx.font = "14px Arial";
+          ctx.fillText("www.raiku.xyz", 360, 280);
+
+          // Buat QR Code
+          let qrCanvas = document.createElement("canvas");
+          let qr = new QRious({
+            element: qrCanvas,
+            value: "https://raiku.xyz/community", // ganti link komunitas
+            size: 100,
+            background: "white",
+            foreground: "black"
+          });
+
+          // Tempel QR Code di kanan bawah
+          ctx.drawImage(qrCanvas, canvas.width - 120, canvas.height - 120);
+        }
+      }
+    }
+
+    function downloadCard() {
+      let canvas = document.getElementById("idCanvas");
+      let link = document.createElement("a");
+      link.download = "Raiku_Pro_ID.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+  </script>
+</body>
+</html>
